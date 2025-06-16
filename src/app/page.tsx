@@ -5,7 +5,7 @@ import { MountainIcon, User, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -15,6 +15,13 @@ export default function HomePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isGuestLoading, setIsGuestLoading] = useState(false);
+
+  useEffect(() => {
+    // If already authenticated, redirect to streams page
+    if (isAuthenticated && !authLoading) {
+      router.replace('/streams');
+    }
+  }, [isAuthenticated, authLoading, router]);
 
   const handleGuestLogin = async () => {
     setIsGuestLoading(true);
@@ -40,7 +47,7 @@ export default function HomePage() {
     }
   };
 
-  if (authLoading) {
+  if (authLoading || (isAuthenticated && !authLoading)) { // Check authLoading here too to prevent rendering the page before redirect
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -48,15 +55,6 @@ export default function HomePage() {
     );
   }
 
-  // If already authenticated, redirect to streams page
-  if (isAuthenticated) {
-    router.replace('/streams');
-    return (
-       <div className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -75,9 +73,9 @@ export default function HomePage() {
             Discover and join exciting livestreams. Log in as a guest or with your account to get started!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              onClick={handleGuestLogin} 
-              disabled={isGuestLoading} 
+            <Button
+              onClick={handleGuestLogin}
+              disabled={isGuestLoading}
               className="w-full sm:w-auto"
               size="lg"
             >
@@ -88,8 +86,8 @@ export default function HomePage() {
               )}
               Guest Login
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               asChild
               className="w-full sm:w-auto"
               size="lg"
