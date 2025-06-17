@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import type { Stream } from '@/types'; // Assuming Stream type is defined
 import { Card, CardContent } from '@/components/ui/card';
+import { CardHeader } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Send, UserCircle, RadioTower, Users } from 'lucide-react';
